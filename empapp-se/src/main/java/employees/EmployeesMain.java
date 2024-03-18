@@ -52,5 +52,29 @@ public class EmployeesMain {
                 .block();
 
         System.out.println(selectedNames);
+
+        System.out.println("***");
+
+//        Stream.of(
+//                        new Employee("John Doe", 1980),
+//                        new Employee("Jane Doe", 1990),
+//                        new Employee("Jack Smith", 2000)
+//                )
+//                .peek(System.out::println) // a peek() metódusnak felel meg
+//                .map(e -> e.getAgeIn(2020));
+//
+
+        Flux.just(
+                new Employee("John Doe", 1980),
+                new Employee("Jack Smith", 2000),
+                new Employee("Jane Doe", 1990)
+        )
+                .doOnNext(System.out::println) // a peek() metódusnak felel meg
+                .map(e -> e.getAgeIn(1995))
+                .onErrorReturn(-1)
+                .subscribe(System.out::println);
+
+
+
     }
 }

@@ -1,14 +1,24 @@
 package employees;
 
+import java.util.List;
+
 public class Employee {
 
     private String name;
 
     private int yearOfBirth;
 
+    private List<String> skills;
+
     public Employee(String name, int yearOfBirth) {
         this.name = name;
         this.yearOfBirth = yearOfBirth;
+    }
+
+    public Employee(String name, int yearOfBirth, List<String> skills) {
+        this.name = name;
+        this.yearOfBirth = yearOfBirth;
+        this.skills = skills;
     }
 
     public int getAgeIn(int year) {
@@ -24,5 +34,9 @@ public class Employee {
 
     public int getYearOfBirth() {
         return yearOfBirth;
+    }
+
+    public List<String> getSkills() {
+        return skills;
     }
 }
