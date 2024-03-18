@@ -11,6 +11,13 @@ public class Employee {
         this.yearOfBirth = yearOfBirth;
     }
 
+    public int getAgeIn(int year) {
+        if (year <= yearOfBirth) {
+            throw new IllegalArgumentException("Year is too early.");
+        }
+        return year - yearOfBirth;
+    }
+
     public String getName() {
         return name;
     }
