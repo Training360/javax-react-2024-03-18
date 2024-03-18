@@ -112,7 +112,6 @@ public class EmployeesMain {
                             .map(e1 -> e1.getAgeIn(1995))
                             .onErrorResume(t -> Mono.just(-1))
                 )
-                .onErrorReturn(-1)
                 .subscribe(System.out::println);
 
     }
