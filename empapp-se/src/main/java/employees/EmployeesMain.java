@@ -84,6 +84,36 @@ public class EmployeesMain {
                 .sort()
                 .subscribe(System.out::println);
 
+        Flux.just(
+                        new Employee("John Doe", 1980),
+                        new Employee("Jack Smith", 2000),
+                        new Employee("Jane Doe", 1990)
+                )
+                .doOnNext(System.out::println) // a peek() metódusnak felel meg
+                .map(e -> {
+                    try {
+                        return e.getAgeIn(1995);
+                    }catch (IllegalArgumentException iea) {
+                        return -1;
+                    }
+
+                })
+                .onErrorReturn(-1)
+                .subscribe(System.out::println);
+
+        Flux.just(
+                        new Employee("John Doe", 1980),
+                        new Employee("Jack Smith", 2000),
+                        new Employee("Jane Doe", 1990)
+                )
+                .doOnNext(System.out::println) // a peek() metódusnak felel meg
+                .flatMap(e ->
+                    Mono.just(e)
+                            .map(e1 -> e1.getAgeIn(1995))
+                            .onErrorResume(t -> Mono.just(-1))
+                )
+                .onErrorReturn(-1)
+                .subscribe(System.out::println);
 
     }
 }
