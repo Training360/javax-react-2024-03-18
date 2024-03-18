@@ -39,4 +39,13 @@ public class Employee {
     public List<String> getSkills() {
         return skills;
     }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "name='" + name + '\'' +
+                ", yearOfBirth=" + yearOfBirth +
+                ", skills=" + skills +
+                '}';
+    }
 }

@@ -74,6 +74,15 @@ public class EmployeesMain {
                 .onErrorReturn(-1)
                 .subscribe(System.out::println);
 
+        Flux.just(
+                        new Employee("John Doe", 1980, List.of("Java", "Flux", "Python")),
+                        new Employee("Jane Doe", 1990, List.of("Java", "Mono", "JavaScript")),
+                        new Employee("Jack Smith", 2000, List.of("Python"))
+                )
+                .flatMap(e -> Flux.fromIterable(e.getSkills()))
+                .distinct()
+                .sort()
+                .subscribe(System.out::println);
 
 
     }
