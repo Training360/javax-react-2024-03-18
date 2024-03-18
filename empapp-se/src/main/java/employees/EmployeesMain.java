@@ -110,7 +110,11 @@ public class EmployeesMain {
                 .flatMap(e ->
                     Mono.just(e)
                             .map(e1 -> e1.getAgeIn(1995))
-                            .onErrorResume(t -> Mono.just(-1))
+                            .onErrorResume(t -> t instanceof IllegalArgumentException || t instanceof IllegalStateException, t ->
+                            {
+                                System.out.println(t.getMessage());
+                                return Mono.just(-1);
+                            })
                 )
                 .subscribe(System.out::println);
 
