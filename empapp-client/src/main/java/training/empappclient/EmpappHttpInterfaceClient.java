@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 @Component
 @AllArgsConstructor
@@ -17,7 +18,13 @@ public class EmpappHttpInterfaceClient implements CommandLineRunner {
 //        var result = employeesService.list().collectList().block();
 //        log.info("Result: {}", result);
 
-        var result = employeesService.findById(14).block();
+//        var result = employeesService.findById(14).block();
+//        log.info("Result: {}", result);
+
+        var result = Flux.just(10, 11, 12)
+                .flatMap(i -> employeesService.findById(i))
+                .log()
+                .collectList().block();
         log.info("Result: {}", result);
 
     }
