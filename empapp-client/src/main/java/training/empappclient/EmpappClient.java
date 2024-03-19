@@ -7,7 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@Component
+//@Component
 @Slf4j
 @AllArgsConstructor
 public class EmpappClient implements CommandLineRunner {
@@ -20,7 +20,8 @@ public class EmpappClient implements CommandLineRunner {
 
       var client = webClientBuilder.baseUrl("http://localhost:8080").build();
 
-      var response = client.get().uri("/api/employees").retrieve().bodyToMono(String.class).block();
+//      var response = client.get().uri("/api/employees").retrieve().bodyToMono(String.class).block();
+      var response = client.get().uri("/api/employees").retrieve().bodyToFlux(Employee.class).collectList().block();
       log.info("Response: {}", response);
     }
 }
