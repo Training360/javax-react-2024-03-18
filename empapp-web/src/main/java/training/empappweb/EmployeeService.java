@@ -25,9 +25,25 @@ public class EmployeeService {
 
     public Mono<EmployeeResource> createEmployee(EmployeeResource employeeResource) {
         return Mono.just(employeeResource)
+                .flatMap(r -> validate(r).thenReturn(r))
                 .map(this::toEntity)
                 .flatMap(employeeRepository::save)
                 .map(this::toResource);
+    }
+
+//    public void validate(EmployeeResource employeeResource) {
+//        if (employeeResource.getName().startsWith("xxx")) {
+//            throw new InvalidEmployeeException("Can not start with xxx");
+//        }
+//    }
+
+    public Mono<Void> validate(EmployeeResource employeeResource) {
+        return employeeRepository.existsByName(employeeResource.getName())
+                .handle((alreadyExists, sink) -> {
+                   if (alreadyExists) {
+                       sink.error(new InvalidEmployeeException("Name already exists: %s".formatted(employeeResource.getName())));
+                   }
+                });
     }
 
     public Mono<EmployeeResource> updateEmployee(EmployeeResource employeeResource) {

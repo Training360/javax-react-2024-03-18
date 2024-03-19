@@ -45,6 +45,11 @@ public class EmployeeRepository {
         }
     }
 
+    public Mono<Boolean> existsByName(String name) {
+        return Flux.fromIterable(employees)
+                .any(e -> e.getName().equals(name));
+    }
+
     public Mono<Void> deleteById(long id) {
         employees.removeIf(e -> e.getId() == id);
         return Mono.empty();
