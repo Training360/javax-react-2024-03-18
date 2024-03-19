@@ -1,5 +1,6 @@
 package training.empappweb;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,14 +35,14 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<EmployeeResource>> createEmployee(@RequestBody EmployeeResource employeeResource) {
+    public Mono<ResponseEntity<EmployeeResource>> createEmployee(@Valid @RequestBody EmployeeResource employeeResource) {
         return employeeService
                 .createEmployee(employeeResource)
                 .map(r -> ResponseEntity.created(URI.create("/api/employees/%d".formatted(r.getId()))).body(r));
     }
 
     @PutMapping("/{id}")
-    public Mono<EmployeeResource> updateEmployee(@PathVariable("id") long id, @RequestBody EmployeeResource employeeResource) {
+    public Mono<EmployeeResource> updateEmployee(@PathVariable("id") long id, @Valid @RequestBody EmployeeResource employeeResource) {
         if (employeeResource.getId() != id) {
             throw new IllegalArgumentException("Ids not the same");
         }
