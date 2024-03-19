@@ -19,7 +19,7 @@ public class EmployeeService {
                 .findAllBy();
     }
 
-    public Mono<EmployeeResource> findEmployeeById(long id) {
+    public Mono<EmployeeResource> findEmployeeById(String id) {
         return employeeRepository
 //                .findById(id)
 //                .map(this::toResource);
@@ -68,7 +68,7 @@ public class EmployeeService {
                 .map(this::toResource);
     }
 
-    public Mono<Void> deleteEmployee(long id) {
+    public Mono<Void> deleteEmployee(String id) {
         return employeeRepository.deleteById(id);
     }
 
