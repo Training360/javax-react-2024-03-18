@@ -1,6 +1,7 @@
 package training.empappweb;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -11,6 +12,8 @@ import reactor.core.publisher.Mono;
 public class EmployeeService {
 
     private EmployeeRepository employeeRepository;
+
+    private StreamBridge streamBridge;
 
     public Flux<EmployeeResource> listEmployees() {
         return employeeRepository
@@ -33,6 +36,7 @@ public class EmployeeService {
                 .map(this::toEntity)
                 .flatMap(employeeRepository::save)
                 .map(this::toResource)
+                .doOnNext(r -> streamBridge.send("employeesEvents", r))
 //                .handle((r, sink) -> sink.error(new IllegalStateException("rollback")))
                 ;
     }
