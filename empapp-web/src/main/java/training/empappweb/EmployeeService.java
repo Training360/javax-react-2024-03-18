@@ -41,7 +41,8 @@ public class EmployeeService {
         return employeeRepository.existsByName(employeeResource.getName())
                 .handle((alreadyExists, sink) -> {
                    if (alreadyExists) {
-                       sink.error(new InvalidEmployeeException("Name already exists: %s".formatted(employeeResource.getName())));
+                       sink.error(new InvalidEmployeeException("Name already exists: %s".formatted(employeeResource.getName()),
+                               employeeResource.getName()));
                    }
                 });
     }

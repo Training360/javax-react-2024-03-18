@@ -32,4 +32,17 @@ public class EmployeesExceptionHandler {
 
         return Mono.just(problemDetail);
     }
+
+    @ExceptionHandler
+    public Mono<ProblemDetail> handle(InvalidEmployeeException exception) {
+        var problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, exception.getMessage()
+        );
+        problemDetail.setType(URI.create("employees/service-validation-error"));
+        problemDetail.setTitle("Service validation error");
+
+        problemDetail.setProperty("name", exception.getName());
+
+        return Mono.just(problemDetail);
+    }
 }

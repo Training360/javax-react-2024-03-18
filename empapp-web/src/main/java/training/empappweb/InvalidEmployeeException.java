@@ -1,8 +1,14 @@
 package training.empappweb;
 
+import lombok.Getter;
+
 public class InvalidEmployeeException extends Exception {
 
-    public InvalidEmployeeException(String message) {
+    @Getter
+    private String name;
+
+    public InvalidEmployeeException(String message, String name) {
         super(message);
+        this.name = name;
     }
 }
