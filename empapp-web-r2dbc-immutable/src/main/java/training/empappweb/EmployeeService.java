@@ -27,7 +27,7 @@ public class EmployeeService {
 
     public Mono<EmployeeResource> createEmployee(EmployeeResource employeeResource) {
         return Mono.just(employeeResource)
-                .flatMap(r -> validate(r).thenReturn(r))
+//                .flatMap(r -> validate(r).thenReturn(r))
                 .map(this::toEntity)
                 .flatMap(employeeRepository::save)
                 .map(this::toResource);
@@ -40,11 +40,11 @@ public class EmployeeService {
 //    }
 
     public Mono<Void> validate(EmployeeResource employeeResource) {
-        return employeeRepository.existsByName(employeeResource.getName())
+        return employeeRepository.existsByName(employeeResource.name())
                 .handle((alreadyExists, sink) -> {
                    if (alreadyExists) {
-                       sink.error(new InvalidEmployeeException("Name already exists: %s".formatted(employeeResource.getName()),
-                               employeeResource.getName()));
+                       sink.error(new InvalidEmployeeException("Name already exists: %s".formatted(employeeResource.name()),
+                               employeeResource.name()));
                    }
                 });
     }
@@ -59,8 +59,9 @@ public class EmployeeService {
         // Ha lenne több attribútum, mondjuk 5, és csak a name értékét szeretnénk update-elni
 
         return Mono.just(employeeResource)
-                .flatMap(r -> employeeRepository.findById(employeeResource.getId()))
-                .doOnNext(e -> e.setName(employeeResource.getName()))
+                .flatMap(r -> employeeRepository.findById(employeeResource.id()))
+                .map(e -> new Employee(e.id(), employeeResource.name()))
+                .flatMap(e -> employeeRepository.save(e))
                 .map(this::toResource);
     }
 
@@ -70,10 +71,10 @@ public class EmployeeService {
 
     // MapStruct
     public EmployeeResource toResource(Employee employee) {
-        return new EmployeeResource(employee.getId(), employee.getName());
+        return new EmployeeResource(employee.id(), employee.name());
     }
 
     public Employee toEntity(EmployeeResource employeeResource) {
-        return new Employee(employeeResource.getId(), employeeResource.getName());
+        return new Employee(employeeResource.id(), employeeResource.name());
     }
 }

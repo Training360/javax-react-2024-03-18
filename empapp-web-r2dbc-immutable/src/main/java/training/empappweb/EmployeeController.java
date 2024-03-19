@@ -38,12 +38,12 @@ public class EmployeeController {
     public Mono<ResponseEntity<EmployeeResource>> createEmployee(@Valid @RequestBody EmployeeResource employeeResource) {
         return employeeService
                 .createEmployee(employeeResource)
-                .map(r -> ResponseEntity.created(URI.create("/api/employees/%d".formatted(r.getId()))).body(r));
+                .map(r -> ResponseEntity.created(URI.create("/api/employees/%d".formatted(r.id()))).body(r));
     }
 
     @PutMapping("/{id}")
     public Mono<EmployeeResource> updateEmployee(@PathVariable("id") long id, @Valid @RequestBody EmployeeResource employeeResource) {
-        if (employeeResource.getId() != id) {
+        if (employeeResource.id() != id) {
             throw new IllegalArgumentException("Ids not the same");
         }
         return employeeService.updateEmployee(employeeResource);

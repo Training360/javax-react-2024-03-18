@@ -2,7 +2,7 @@
 GET http://localhost:8080/api/employees
 
 ###
-GET http://localhost:8080/api/employees/1
+GET http://localhost:8080/api/employees/8
 
 ###
 POST http://localhost:8080/api/employees
@@ -21,12 +21,12 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:8080/api/employees/1
+PUT http://localhost:8080/api/employees/8
 Content-Type: application/json
 
 {
-  "id": 1,
-  "name": "John Doe XXX"
+  "id": 8,
+  "name": "John Doe YYY"
 }
 
 ###
