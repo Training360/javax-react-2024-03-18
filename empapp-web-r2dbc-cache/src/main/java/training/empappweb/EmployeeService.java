@@ -2,6 +2,7 @@ package training.empappweb;
 
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -13,6 +14,8 @@ public class EmployeeService {
 
     private EmployeeRepository employeeRepository;
 
+    private ReactiveRedisTemplate<Long, EmployeeResource> redisTemplate;
+
     public Flux<EmployeeResource> listEmployees() {
         return employeeRepository
 //                .findAll()
@@ -21,10 +24,16 @@ public class EmployeeService {
     }
 
     public Mono<EmployeeResource> findEmployeeById(long id) {
-        return employeeRepository
+        return redisTemplate.opsForValue().get(id)
+                .switchIfEmpty(
+                        employeeRepository.findResourceById(id)
+                                .flatMap(resource -> redisTemplate.opsForValue().set(id, resource).thenReturn(resource))
+                );
+
+//        return employeeRepository
 //                .findById(id)
 //                .map(this::toResource);
-                .findResourceById(id);
+//                .findResourceById(id);
     }
 
     @Transactional
@@ -66,7 +75,9 @@ public class EmployeeService {
         return Mono.just(employeeResource)
                 .flatMap(r -> employeeRepository.findById(employeeResource.getId()))
                 .doOnNext(e -> e.setName(employeeResource.getName()))
-                .map(this::toResource);
+                .flatMap(e -> employeeRepository.save(e))
+                .map(this::toResource)
+                .flatMap(r -> redisTemplate.opsForValue().set(r.getId(), r).thenReturn(r));
     }
 
     public Mono<Void> deleteEmployee(long id) {
