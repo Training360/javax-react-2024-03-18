@@ -2,6 +2,7 @@ package training.empappweb;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -25,12 +26,15 @@ public class EmployeeService {
                 .findResourceById(id);
     }
 
+    @Transactional
     public Mono<EmployeeResource> createEmployee(EmployeeResource employeeResource) {
         return Mono.just(employeeResource)
-                .flatMap(r -> validate(r).thenReturn(r))
+//                .flatMap(r -> validate(r).thenReturn(r))
                 .map(this::toEntity)
                 .flatMap(employeeRepository::save)
-                .map(this::toResource);
+                .map(this::toResource)
+//                .handle((r, sink) -> sink.error(new IllegalStateException("rollback")))
+                ;
     }
 
 //    public void validate(EmployeeResource employeeResource) {
