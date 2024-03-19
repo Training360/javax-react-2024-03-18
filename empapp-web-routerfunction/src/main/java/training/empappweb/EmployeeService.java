@@ -23,8 +23,8 @@ public class EmployeeService {
                 .map(this::toResource);
     }
 
-    public Mono<EmployeeResource> createEmployee(EmployeeResource employeeResource) {
-        return Mono.just(employeeResource)
+    public Mono<EmployeeResource> createEmployee(Mono<EmployeeResource> employeeResource) {
+        return employeeResource
                 .flatMap(r -> validate(r).thenReturn(r))
                 .map(this::toEntity)
                 .flatMap(employeeRepository::save)
@@ -47,7 +47,7 @@ public class EmployeeService {
                 });
     }
 
-    public Mono<EmployeeResource> updateEmployee(EmployeeResource employeeResource) {
+    public Mono<EmployeeResource> updateEmployee(Mono<EmployeeResource> employeeResource) {
 //        return Mono.just(employeeResource)
 //                .map(this::toEntity)
 //                .flatMap(employeeRepository::save)
@@ -56,9 +56,9 @@ public class EmployeeService {
         // Mi van akkor, ha az employeeresource NEM tartalmazza az ÖSSZES attribútum értéket
         // Ha lenne több attribútum, mondjuk 5, és csak a name értékét szeretnénk update-elni
 
-        return Mono.just(employeeResource)
-                .flatMap(r -> employeeRepository.findById(employeeResource.getId()))
-                .doOnNext(e -> e.setName(employeeResource.getName()))
+        return employeeResource
+                .flatMap(r -> employeeRepository.findById(r.getId()))
+                .doOnNext(e -> e.setName(e.getName()))
                 .map(this::toResource);
     }
 

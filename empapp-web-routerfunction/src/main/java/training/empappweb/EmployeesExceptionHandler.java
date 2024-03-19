@@ -1,5 +1,6 @@
 package training.empappweb;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,7 +15,7 @@ import java.util.UUID;
 public class EmployeesExceptionHandler {
 
     @ExceptionHandler
-    public Mono<ProblemDetail> handle(WebExchangeBindException exception) {
+    public Mono<ProblemDetail> handle(ConstraintViolationException exception) {
         var problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST, exception.getMessage()
         );
@@ -22,10 +23,9 @@ public class EmployeesExceptionHandler {
         problemDetail.setTitle("Validation error");
         problemDetail.setProperty("id", UUID.randomUUID().toString());
 
-        var items = exception.getBindingResult()
-                .getFieldErrors()
+        var items = exception.getConstraintViolations()
                 .stream()
-                .map(e -> new ValidationItem(e.getField(), e.getDefaultMessage()))
+                .map(e -> new ValidationItem(e.getPropertyPath().toString(), e.getMessage()))
                 .toList();
 
         problemDetail.setProperty("validationErrors", items);
